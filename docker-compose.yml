@@ -1,0 +1,49 @@
+services:
+  # Spring Boot Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: radar-backend
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_APPLICATION_NAME=radar-monitoring-backend
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:radar_monitoring
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - JAVA_OPTS=-XX:+UseG1GC -XX:MaxRAMPercentage=75.0
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - radar-network
+
+  # React Frontend with TanStack Start SSR
+  frontend:
+    build:
+      context: ./Radar-System-monitoring-main
+      dockerfile: Dockerfile
+    container_name: radar-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      - VITE_API_URL=http://backend:8081/api
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - radar-network
+
+networks:
+  radar-network:
+    driver: bridge
