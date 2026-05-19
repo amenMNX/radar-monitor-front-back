@@ -14,7 +14,14 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:5173", "http://localhost:3000")
+                        // FIX: added port 4173 (vite preview / Docker) and 80 (nginx in container)
+                        .allowedOrigins(
+                                "http://localhost:5173",   // vite dev server
+                                "http://localhost:3000",   // alternate dev
+                                "http://localhost:4173",   // vite preview / Docker mapped port
+                                "http://localhost:80",     // nginx inside container
+                                "http://localhost"         // nginx without port
+                        )
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*");
             }

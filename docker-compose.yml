@@ -24,15 +24,18 @@ services:
     build:
       context: ./Radar-System-monitoring-main
       dockerfile: Dockerfile
+      # FIX: VITE_API_URL must be a BUILD ARG, not a runtime env var.
+      # Vite replaces import.meta.env.VITE_* at bundle time; the value is
+      # baked into the JS bundle and cannot be changed at container start.
+      # The Dockerfile must declare: ARG VITE_API_URL and ENV VITE_API_URL=$VITE_API_URL
+      args:
+        - VITE_API_URL=http://localhost:8081/api
     container_name: radar-frontend
     ports:
       - "4173:4173"
     depends_on:
       backend:
         condition: service_healthy
-    environment:
-      - NODE_ENV=production
-      - VITE_API_URL=http://backend:8081/api
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4173"]
       interval: 30s

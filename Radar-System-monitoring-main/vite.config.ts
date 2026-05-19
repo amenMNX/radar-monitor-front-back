@@ -14,6 +14,17 @@ export default defineConfig({
   resolve: {
     dedupe: ["react", "react-dom", "@tanstack/react-start", "@tanstack/react-router"],
   },
+  // ── Dev proxy: forward /api/* to the Spring Boot backend ──────────────────
+  // This lets the frontend call fetch("/api/radars") in development without
+  // running into CORS issues or hard-coded ports.
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8081",
+        changeOrigin: true,
+      },
+    },
+  },
   preview: {
     port: 4173,
     host: "0.0.0.0",
