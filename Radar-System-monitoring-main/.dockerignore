@@ -3,13 +3,10 @@ npm-debug.log
 .git/
 .gitignore
 .DS_Store
-dist/
+.output/
 .env
 .env.local
 README.md
-Dockerfile
-nginx.conf
-.dockerignore
 .vite/
 coverage/
 .eslintcache

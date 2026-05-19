@@ -1,5 +1,4 @@
 services:
-  # Spring Boot Backend
   backend:
     build:
       context: ./backend
@@ -21,22 +20,21 @@ services:
     networks:
       - radar-network
 
-  # React Frontend with TanStack Start SSR
   frontend:
     build:
       context: ./Radar-System-monitoring-main
       dockerfile: Dockerfile
     container_name: radar-frontend
     ports:
-      - "3000:3000"
+      - "4173:4173"
     depends_on:
       backend:
         condition: service_healthy
     environment:
-      - VITE_API_URL=http://backend:8081/api
       - NODE_ENV=production
+      - VITE_API_URL=http://backend:8081/api
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4173"]
       interval: 30s
       timeout: 10s
       retries: 3
